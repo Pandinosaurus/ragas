@@ -9,7 +9,7 @@ from ragas.integrations.langchain import EvaluatorChain
 if t.TYPE_CHECKING:
     from langsmith.schemas import Dataset as LangsmithDataset
 
-    from ragas.testset.generator import TestDataset
+    from ragas.testset import Testset
 
 try:
     from langsmith import Client
@@ -21,7 +21,7 @@ except ImportError:
 
 
 def upload_dataset(
-    dataset: TestDataset, dataset_name: str, dataset_desc: str = ""
+    dataset: Testset, dataset_name: str, dataset_desc: str = ""
 ) -> LangsmithDataset:
     """
     Uploads a new dataset to LangSmith, converting it from a TestDataset object to a
@@ -155,12 +155,10 @@ def evaluate(
 
     # make config
     if metrics is None:
-        from ragas.metrics import (
-            answer_relevancy,
-            context_precision,
-            context_recall,
-            faithfulness,
-        )
+        from ragas.metrics._answer_relevance import answer_relevancy
+        from ragas.metrics._context_precision import context_precision
+        from ragas.metrics._context_recall import context_recall
+        from ragas.metrics._faithfulness import faithfulness
 
         metrics = [answer_relevancy, context_precision, faithfulness, context_recall]
 
@@ -170,7 +168,7 @@ def evaluate(
     )
 
     # run evaluation with langsmith
-    run = client.run_on_dataset(
+    run = client.run_on_dataset(  # type: ignore[attr-defined]
         dataset_name=dataset_name,
         llm_or_chain_factory=llm_or_chain_factory,
         evaluation=eval_config,

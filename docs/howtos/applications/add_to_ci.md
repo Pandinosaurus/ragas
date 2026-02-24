@@ -1,25 +1,27 @@
+---
+search:
+  exclude: true
+---
+
 # Adding to your CI pipeline with Pytest
 
-You can add Ragas evaluations as part of your Continious Integration pipeline 
-to keep track of the qualitative performance of your RAG pipeline. Consider these as 
+You can add Ragas evaluations as part of your Continious Integration pipeline
+to keep track of the qualitative performance of your RAG pipeline. Consider these as
 part of your end-to-end test suite which you run before major changes and releases.
 
-The usage is straight forward but the main things is to set the `in_ci` argument for the
-`evaluate()` function to `True`. This runs Ragas metrics in a special mode that ensures 
-it produces more reproducable metrics but will be more costlier.
+The usage is straight forward, but the main thing is to set the `in_ci` argument for the
+`evaluate()` function to `True`. This runs Ragas metrics in a special mode that ensures
+it produces more reproducible metrics but will be costlier.
 
-You can easily write a pytest test as follows
+You can easily write a Pytest test as follows
 
-:::{note}
-This dataset that is already populated with outputs from a reference RAG
-When testing your own system make sure you use outputs from RAG pipeline 
-you want to test. For more information on how to build your datasets check 
-[Building HF `Dataset` with your own Data](./data_preparation.md) docs.
-:::
+!!! note
+    This dataset that is already populated with outputs from a reference RAG
+    When testing your own system make sure you use outputs from RAG pipeline
+    you want to test. For more information on how to build your datasets check
+    [Building HF `Dataset` with your own Data](./data_preparation.md) docs.
 
-```{code-block} python
-:caption: tests/e2e/test_amnesty_e2e.py
-:linenos:
+```python
 import pytest
 from datasets import load_dataset
 
@@ -40,7 +42,7 @@ def assert_in_range(score: float, value: float, plus_or_minus: float):
 
 def test_amnesty_e2e():
     # loading the V2 dataset
-    amnesty_qa = load_dataset("explodinggradients/amnesty_qa", "english_v2")["eval"]
+    amnesty_qa = load_dataset("vibrantlabsai/amnesty_qa", "english_v2")["eval"]
 
 
     result = evaluate(
@@ -56,11 +58,10 @@ def test_amnesty_e2e():
 
 ## Using Pytest Markers for Ragas E2E tests
 
-Because these are long end-to-end test one thing that you can leverage is [Pytest Markers](https://docs.pytest.org/en/latest/example/markers.html) which help you mark your tests with special tags. It is recommended to mark Ragas tests with special tags so you can run them only when needed.
+Because these are long end-to-end test one thing that you can leverage is [Pytest Markers](https://docs.pytest.org/en/latest/example/markers.html) which help you mark your tests with special tags. It is recommended to mark Ragas tests with special tags, so you can run them only when needed.
 
-To add a new `ragas_ci` tag to pytest add the following to your `conftest.py`
-```{code-block} python
-:caption: conftest.py
+To add a new `ragas_ci` tag to Pytest, add the following to your `conftest.py`
+```python
 def pytest_configure(config):
     """
     configure pytest
@@ -73,10 +74,7 @@ def pytest_configure(config):
 
 now you can use `ragas_ci` to mark all the tests that are part of Ragas CI.
 
-```{code-block} python
-:caption: tests/e2e/test_amnesty_e2e.py
-:linenos:
-:emphasize-added: 19
+```python
 import pytest
 from datasets import load_dataset
 
@@ -98,7 +96,7 @@ def assert_in_range(score: float, value: float, plus_or_minus: float):
 @pytest.mark.ragas_ci
 def test_amnesty_e2e():
     # loading the V2 dataset
-    amnesty_qa = load_dataset("explodinggradients/amnesty_qa", "english_v2")["eval"]
+    amnesty_qa = load_dataset("vibrantlabsai/amnesty_qa", "english_v2")["eval"]
 
 
     result = evaluate(
